@@ -1,22 +1,49 @@
 import React, { useState } from "react";
-import ShoppingList from "./ShoppingList";
-import Header from "./Header";
-import itemData from "../data/items";
+import Filter from "./Filter";
 
-function App() {
-  const [items, setItems] = useState(itemData);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+const App = () => {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
 
-  function handleDarkModeClick() {
-    setIsDarkMode((isDarkMode) => !isDarkMode);
-  }
+  const items = [
+    { name: "Lettuce", category: "Produce" },
+    { name: "Yogurt", category: "Dairy" },
+    { name: "Swiss Cheese", category: "Dairy" },
+    { name: "String Cheese", category: "Dairy" },
+    { name: "Cake", category: "Dessert" },
+  ];
+
+  const handleSearchChange = (newSearch) => {
+    setSearch(newSearch);
+  };
+
+  const handleCategoryChange = (newCategory) => {
+    setCategory(newCategory);
+  };
+
+  // Filter items based on search and category
+  const filteredItems = items.filter((item) => {
+    const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = category === "All" || item.category === category;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
-    <div className={"App " + (isDarkMode ? "dark" : "light")}>
-      <Header isDarkMode={isDarkMode} onDarkModeClick={handleDarkModeClick} />
-      <ShoppingList items={items} />
+    <div>
+      <Filter
+        search={search}
+        onSearchChange={handleSearchChange}
+        onCategoryChange={handleCategoryChange}
+      />
+      <ul>
+        {filteredItems.map((item) => (
+          <li key={item.name}>
+            <span>{item.name}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
-}
+};
 
 export default App;
